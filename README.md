@@ -40,4 +40,6 @@ Below the usergroup you should see a dropdown where you can select one of the av
 ## Using the sheet
 Now you can copy/paste a list of users in the sheet according to the layout. Make sure the usergroups already exist on the platform (so are available in the dropdown). Then select the **Create Users** from the Toolsquare menu. All new users will receive an invitation to activate their account on the platform. The script will also **add** (for new users) or **change** (for existing users) the user group.
 
+Here's [a movie](https://drive.google.com/file/d/1H-ZGBaBY1VKTK_nP_cQE9MwGrJ-VSeXR/view?usp=sharing) of the whole process.
+
 
