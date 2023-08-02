@@ -1,3 +1,4 @@
+//OAuth 2 lib = 1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF
 const DOMAIN = "-api.toolsquare.io";
 
 const OauthURL = "/o/authorize/";
@@ -7,6 +8,8 @@ const USERS_CREATE_URL = '/api/user_core/user/bulkcreate/';
 const USER_GROUPS_URL = '/open-api/v1/groups/usergroup/';
 const USERS_UPDATE_URL = '/open-api/v1/users/user/bulkupdate/';
 const USERS_DESTROY_URL = '/open-api/v1/users/user/bulkdestroy/';
+
+let theProps = PropertiesService.getDocumentProperties();
 
 let NrOfNewUsers = 0;
 let NrOfCalls = 0;
@@ -25,7 +28,7 @@ function onOpen() {
 }
 
 function getUrl(slug) {
-  let tenant = UserProperties.getProperty('CLIENT_TENANT');
+  let tenant = theProps.getProperty('CLIENT_TENANT');
   return "https://" + tenant + DOMAIN + slug;
 }
 
@@ -155,22 +158,22 @@ function getUserGroupID(theusergroups, thegroupname) {
 
 function getService() {
   //get check credentials
-  let C_TENANT = UserProperties.getProperty('CLIENT_TENANT');
+  let C_TENANT = theProps.getProperty('CLIENT_TENANT');
   if (C_TENANT === null) {
     setKey_('CLIENT_TENANT', 'tenant');
-    C_TENANT = UserProperties.getProperty('CLIENT_TENANT');
+    C_TENANT = theProps.getProperty('CLIENT_TENANT');
   }
 
-  let C_ID = UserProperties.getProperty('CLIENT_KEY');
+  let C_ID = theProps.getProperty('CLIENT_KEY');
   if (C_ID === null) {
     setKey_('CLIENT_KEY', 'client id');
-    C_ID = UserProperties.getProperty('CLIENT_KEY');
+    C_ID = theProps.getProperty('CLIENT_KEY');
   }
 
-  let C_SECRET = UserProperties.getProperty('CLIENT_SECRET');
+  let C_SECRET = theProps.getProperty('CLIENT_SECRET');
   if (C_SECRET === null) {
     setKey_('CLIENT_SECRET', 'client secret');
-    C_SECRET = UserProperties.getProperty('CLIENT_SECRET');
+    C_SECRET = theProps.getProperty('CLIENT_SECRET');
   }
 
   let authURL = getUrl(OauthURL);
@@ -182,7 +185,7 @@ function getService() {
     .setClientId(C_ID)
     .setClientSecret(C_SECRET)
     .setCallbackFunction('oauthCallback')
-    .setPropertyStore(PropertiesService.getUserProperties())
+    .setPropertyStore(theProps)
     .setScope('read')
     .setTokenHeaders({
       'Authorization': 'Basic ' + Utilities.base64Encode(C_ID + ':' + C_SECRET),
@@ -218,7 +221,7 @@ function apiTSData(theURL, theContent, method) {
   //Access granted
   if (isConnected) {
     Logger.log(theURL + " " + method);
-    // let tenant = UserProperties.getProperty('CLIENT_TENANT');
+    // let tenant = PropertiesService.getUserProperties('CLIENT_TENANT');
     let url = getUrl(theURL);
 
     let response = UrlFetchApp.fetch(url, {
@@ -323,11 +326,11 @@ function setKey_(KEY, Promt) {
   var scriptValue = ui.prompt('Please provide your ' + Promt, ui.ButtonSet.OK);
   let value = scriptValue.getResponseText();
   if (value.length > 1) {
-    UserProperties.setProperty(KEY, value);
+    theProps.setProperty(KEY, value);
   }
 }
 
 function deleteAll() {
-  UserProperties.deleteAllProperties();
+  theProps.deleteAllProperties();
   CacheService.getDocumentCache();
 }
